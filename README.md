@@ -81,14 +81,13 @@ All parameters are loaded from **environment variables**.
 1. Set environment variables:
 
     ```bash
-    export NUM_BIDDERS=100
-    export NUM_ATTRIBUTES=20
-    export NUM_AUCTIONS=40
-    export AUCTION_TIMEOUT_MS=100
-    export AUCTION_VCPU=1
-    export AUCTION_MEMORY=10
-    export VCPU=4
-    export MEMORY=100
+    NUM_BIDDERS=100
+    NUM_AUCTIONS=40
+    AUCTION_TIMEOUT_MS=100
+    AUCTION_VCPU=1
+    AUCTION_MEMORY=10
+    VCPU=4
+    MEMORY=100
     ```
 2.  Run the Simulator (Go):
 

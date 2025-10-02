@@ -38,6 +38,17 @@ func main() {
 	cpuSem := make(chan struct{}, cfg.VCPU)   // semaphore to limit concurrent auctions to VCPU count
 	memSem := make(chan struct{}, cfg.Memory) // semaphore to limit memory usage (1 token = 1 MB)
 
+	// Resource Standardization:
+	//
+	// vCPU:
+	//   - Configured using the AUCTION_VCPU environment variable.
+	//   - If not specified, Go’s GOMAXPROCS defaults to the number of available CPUs.
+	//
+	// RAM:
+	//   - Configured using the AUCTION_MEMORY environment variable as a simulation parameter.
+	//   - Memory usage is modeled, not enforced at runtime. Actual memory can be monitored
+	//     using Go’s runtime package or OS-level tools if required.
+
 	// assume each auction uses 10 MB memory and 1 VCPU
 
 	// launch the auctions as goroutines
@@ -52,7 +63,11 @@ func main() {
 		}
 		wt.Go(func() {
 			ah.RunAuction(i+1, cfg.AuctionTimeoutMs)
-			<-cpuSem // release VCPU token
+
+			// release VCPU token after auction
+			for range cfg.AuctionVCPU {
+				<-cpuSem
+			}
 			// release memory tokens after auction
 			for range cfg.AuctionMemory {
 				<-memSem

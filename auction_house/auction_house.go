@@ -70,6 +70,19 @@ loop:
 
 		case <-done:
 			// all bidders finished
+			// all remaining bids can be drained from ch and processed
+		drainRemaining:
+			for {
+				select {
+				case b := <-ch:
+					bids = append(bids, b)
+					if winner.Price < b.Price {
+						winner = b
+					}
+				default:
+					break drainRemaining
+				}
+			}
 			break loop
 		case <-ctx.Done():
 			// timeout reached: drain any immediate ready bids from ch (non-blocking)

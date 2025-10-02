@@ -24,17 +24,16 @@ This project demonstrates Go concurrency patterns, resource management, and real
 
 ---
 
-## Assumptions
-
-1. Each auction has **fixed attributes** (20 by default).  
-2. Each bidder may or may not respond within the auction timeout.  
-3. Each auction uses **1 VCPU and 10 MB memory** (configurable).  
-4. Resource limits are enforced **per auction** using semaphores.  
-5. The system does not use external queues (Kafka, Redis) — all concurrency is handled in-process.  
-6. Bidders are simulated — there is no network communication.  
-7. Output is printed to console; JSON output files is also added per auction.  
-8. CPU concurrency is limited using **runtime.GOMAXPROCS** and channel semaphores.  
-9. Memory concurrency is simulated using a semaphore channel (1 token ≈ 1 MB).  
+## Simulation Scope & Constraints
+- Each auction runs with fixed attributes (20 by default).
+- Bidders may or may not respond within the auction timeout.
+- Each auction consumes 1 vCPU and 10 MB memory (configurable).
+- Resource limits are enforced per auction using semaphore channels.
+- No external queues (Kafka, Redis) are used — all concurrency is handled in-process.
+- Bidders are fully simulated; there is no network communication.
+- Results are printed to the console, and detailed JSON files are generated per auction.
+- CPU concurrency is governed by runtime.GOMAXPROCS and a CPU semaphore.
+- Memory concurrency is approximated using a semaphore channel (1 token ≈ 1 MB). 
 
 ---
 
@@ -133,10 +132,14 @@ All parameters are loaded from **environment variables**.
 ## Design Decisions
 1. Semaphores with Channels
 
-    - CPU: A buffered channel (cpuSem) ensures no more goroutines run than available vCPUs.
-    - Memory: Another buffered channel (memSem) approximates memory by requiring tokens per auction.
+   - **CPU (vCPU):**
+    A buffered channel (cpuSem) limits the number of concurrently running goroutines to the number of available vCPUs. The AUCTION_VCPU environment variable controls this value; if unset, Go defaults GOMAXPROCS to the number of available CPU cores.
 
-2. Validation at Startup
+    - **Memory (RAM):**
+    Another buffered channel (memSem) approximates memory usage by requiring tokens per auction. The AUCTION_MEMORY environment variable sets this value. Dynamic RAM measurement is feasible (e.g., via runtime.MemStats), but this version standardizes memory per auction for reproducibility.
+
+
+2. Configuration Validation
 
     - Config values are validated at the start; the program panics if required values are missing or invalid.
 

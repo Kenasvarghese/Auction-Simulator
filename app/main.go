@@ -62,7 +62,8 @@ func main() {
 			memSem <- struct{}{}
 		}
 		wt.Go(func() {
-			ah.RunAuction(i+1, cfg.AuctionTimeoutMs)
+			result := ah.RunAuction(i+1, cfg.AuctionTimeoutMs)
+			log.Printf("Auction %d completed. Winner: %+v\n", i+1, result.Winner)
 
 			// release VCPU token after auction
 			for range cfg.AuctionVCPU {

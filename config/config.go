@@ -8,12 +8,11 @@ import (
 
 // Config holds the configuration values for the auction simulator.
 type Config struct {
-	NumBidders       int `required:"true" split_words:"true"`
-	NumAttributes    int `required:"true" split_words:"true"`
-	NumAuctions      int `required:"true" split_words:"true"`
-	AuctionTimeoutMs int `required:"true" split_words:"true"`
-	AuctionVCPU      int `required:"true" split_words:"true"`
-	AuctionMemory    int `required:"true" split_words:"true"`
+	NumBidders       int `default:"100" split_words:"true"`
+	NumAuctions      int `default:"10" split_words:"true"`
+	AuctionTimeoutMs int `default:"100" split_words:"true"`
+	AuctionVCPU      int `default:"1" split_words:"true"`
+	AuctionMemory    int `default:"10" split_words:"true"`
 	VCPU             int `required:"true" split_words:"true"`
 	Memory           int `required:"true" split_words:"true"`
 }
@@ -22,14 +21,20 @@ type Config struct {
 func LoadConfig() *Config {
 	var cfg Config
 
-	err := envconfig.Process("", &cfg)
-	if err != nil {
-		fmt.Println(err)
+	if err := envconfig.Process("", &cfg); err != nil {
+		fmt.Println("error loading config:", err)
+	}
+
+	// validate only critical values
+	if err := cfg.Validate(); err != nil {
+		fmt.Println("invalid config:", err)
 	}
 
 	return &cfg
 }
 
+// Validate ensures required values are sane.
+// Only the truly critical values are checked.
 func (c *Config) Validate() error {
 	if c.NumBidders <= 0 {
 		return fmt.Errorf("number of bidders must be > 0")
@@ -40,17 +45,11 @@ func (c *Config) Validate() error {
 	if c.AuctionTimeoutMs <= 0 {
 		return fmt.Errorf("auction timeout must be > 0")
 	}
-	if c.AuctionVCPU <= 0 {
-		return fmt.Errorf("number of cpu per auction must be > 0")
+	if c.VCPU <= 0 || c.VCPU < c.AuctionVCPU {
+		return fmt.Errorf("VCPU must be > 0 and >= auction VCPU")
 	}
-	if c.AuctionMemory <= 0 {
-		return fmt.Errorf("memory per auction must be > 0")
-	}
-	if c.VCPU <= 0 {
-		return fmt.Errorf("vCPU must be > 0")
-	}
-	if c.Memory <= 0 {
-		return fmt.Errorf("memory must be > 0")
+	if c.Memory <= 0 || c.Memory < c.AuctionMemory {
+		return fmt.Errorf("memory must be > 0 and >= auction Memory")
 	}
 	return nil
 }

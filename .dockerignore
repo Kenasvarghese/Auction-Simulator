@@ -1,0 +1,17 @@
+# Binaries
+auction-simulator
+*.exe
+*.out
+
+# Build caches
+/build
+/tmp
+
+# Git
+.git
+.gitignore
+
+# Local stuff
+*.log
+*.md
+/output

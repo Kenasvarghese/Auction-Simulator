@@ -106,8 +106,8 @@ loop:
 	}
 
 	// write output JSON file
-	if err := os.MkdirAll("./Output", 0755); err == nil {
-		fn := fmt.Sprintf("%s/auction_%03d.json", "./Output", auctionID)
+	if err := os.MkdirAll("./output", 0755); err == nil {
+		fn := fmt.Sprintf("%s/auction_%03d.json", "./output", auctionID)
 		f, err := os.Create(fn)
 		if err == nil {
 			enc := json.NewEncoder(f)

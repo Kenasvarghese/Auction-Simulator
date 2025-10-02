@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  auction-simulator:
+    build: .
+    container_name: auction-simulator
+    env_file:
+      - .env.sample
+    volumes:
+      - ./output:/app/output

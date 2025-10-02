@@ -89,13 +89,25 @@ All parameters are loaded from **environment variables**.
     export VCPU=4
     export MEMORY=100
     ```
-2.  Run the Simulator:
+2.  Run the Simulator (Go):
 
     ```bash
     go run ./app/main.go
     ```
 
-3. Expected output:
+3. Run the Simulator (Docker):
+
+    ```bash
+        docker-compose up
+    ```
+
+
+    **Note:**
+
+        Docker runs the same binary as go run.
+        Output files appear in the host output/ folder after execution.
+
+4. Expected output:
 
     ```bash
     Starting 40 auctions with 100 bidders
@@ -110,7 +122,7 @@ All parameters are loaded from **environment variables**.
 
         Results are not deterministic across runs.
 
-4. Output Folder
+5. Output Folder
 
     - After execution, an output/ folder will be created containing one JSON file per auction:
     - Each file is named `auction_<id>.json` (e.g., `auction_001.json`).
@@ -133,10 +145,6 @@ All parameters are loaded from **environment variables**.
     - Resource usage is approximated, not enforced at the OS level.
     - The design favors simplicity, concurrency control, and reproducibility.
 ---
-## Limitations
-   - Memory semaphore is only a simulation; it doesn’t monitor real Go heap usage.
-   - No persistence of auction results (memory only).
-   - Runs on a single node (not distributed).
 
 ## Future Improvements
    - Replace simulated memory control with real memory monitoring (runtime.MemStats).

@@ -41,7 +41,8 @@ This project demonstrates Go concurrency patterns, resource management, and real
 
 ```bash
 Auction-Simulator/
-├── main.go # Entry point for the simulator
+├── app/
+│ └── main.go # Entry point for the simulator
 ├── config/
 │ └── config.go # Environment config loader and validator
 ├── auction_house/
@@ -50,6 +51,8 @@ Auction-Simulator/
 │ └── bidder.go # Bidder simulation
 ├── domain/
 │ └── domain.go # Common structs (Bid, AuctionResult, etc.)
+├── output/
+│ └── auction_<id>.json # Results json files
 ├── utils/
 │ └── utils.go # Helper functions (attribute generator, etc.)
 └── README.md
@@ -64,10 +67,9 @@ All parameters are loaded from **environment variables**.
 | Variable               | Description                                    | Default / Required |
 |------------------------|-----------------------------------------------|------------------|
 | `NUM_BIDDERS`          | Number of bidders per auction                 | required         |
-| `NUM_ATTRIBUTES`       | Number of attributes per auction item         | required         |
 | `NUM_AUCTIONS`         | Total number of auctions to simulate          | required         |
 | `AUCTION_TIMEOUT_MS`   | Timeout per auction in milliseconds           | required         |
-| `AUCTION_VCPU`         | VCPU cost per auction                          | required         |
+| `AUCTION_VCPU`         | VCPU cost per auction                         | required         |
 | `AUCTION_MEMORY`       | Memory cost per auction (MB)                  | required         |
 | `VCPU`                 | Total VCPU available for concurrency          | required         |
 | `MEMORY`               | Total memory available (MB)                   | required         |
